@@ -57,6 +57,17 @@ INSERT INTO producto (idProducto, nombreP, descripcion, precio, stock) VALUES
 ('2', 'Producto B', 'Descripcion B', '1000', '20'),
 ('3', 'Producto C', 'Descripcion C', '500', '30');
 
--- Listar nombre, apellido, DNI, teléfono y dirección de clientes que realizaron compras solamente durante 2017. --
+-- Listar nombre, apellido, DNI, teléfono y dirección de clientes que compraron los productos con --
+-- nombre ‘prod1’ y ‘prod2’ pero nunca compraron el producto con nombre ‘prod3’. --
 
-SELECT nombre, apellido, DNI, telefono, direccion FROM cliente WHERE idCliente IN (SELECT idCliente FROM factura WHERE fecha LIKE '2017%');
+SELECT c.nombre, c.apellido, c.DNI, c.telefono, c.direccion FROM producto p
+INNER JOIN detalle d ON p.idProducto = d.idProducto
+INNER JOIN factura f ON f.nroTicket = d.nroTicket
+INNER JOIN cliente c ON c.idCliente = f.idCliente
+WHERE p.nombreP IN ('Producto A', 'Producto B') AND c.idCliente NOT IN (
+    SELECT c.idCliente FROM producto p
+    INNER JOIN detalle d on p.idProducto = d.idProducto
+    INNER JOIN factura f on f.nroTicket = d.nroTicket
+    inner join cliente c ON c.idCliente = f.idCliente
+    WHERE p.nombreP = 'Producto C'
+)

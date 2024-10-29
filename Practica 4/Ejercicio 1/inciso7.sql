@@ -57,6 +57,5 @@ INSERT INTO producto (idProducto, nombreP, descripcion, precio, stock) VALUES
 ('2', 'Producto B', 'Descripcion B', '1000', '20'),
 ('3', 'Producto C', 'Descripcion C', '500', '30');
 
--- Listar nombre, apellido, DNI, teléfono y dirección de clientes que realizaron compras solamente durante 2017. --
-
-SELECT nombre, apellido, DNI, telefono, direccion FROM cliente WHERE idCliente IN (SELECT idCliente FROM factura WHERE fecha LIKE '2017%');
+-- Listar nroTicket, total, fecha, hora y DNI del cliente, 
+-- de aquellas facturas donde se haya comprado el producto ‘prod38’ o la factura tenga fecha de 2019.

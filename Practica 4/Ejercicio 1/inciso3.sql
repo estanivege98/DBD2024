@@ -1,19 +1,19 @@
-CREATE TABLE cliente {
+CREATE TABLE cliente (
     idCliente VARCHAR(100),
     nombre VARCHAR(100),
     apellido VARCHAR(100),
     DNI VARCHAR(100),
     telefono VARCHAR(100),
     direccion VARCHAR(100)
-};
+);
 
-CREATE TABLE factura {
+CREATE TABLE factura (
     nroTicket VARCHAR(100),
     total VARCHAR(100),
     fecha VARCHAR(100),
     hora VARCHAR(100),
     idCliente VARCHAR(100)
-};
+);
 
 CREATE TABLE detalle ( 
   nroTicket VARCHAR(100),

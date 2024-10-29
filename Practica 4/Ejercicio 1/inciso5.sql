@@ -57,6 +57,9 @@ INSERT INTO producto (idProducto, nombreP, descripcion, precio, stock) VALUES
 ('2', 'Producto B', 'Descripcion B', '1000', '20'),
 ('3', 'Producto C', 'Descripcion C', '500', '30');
 
--- Listar nombre, apellido, DNI, teléfono y dirección de clientes que realizaron compras solamente durante 2017. --
+-- Listar para cada producto nombre, descripción, precio y cuantas veces fue vendido. -- 
+-- Tenga en cuenta que puede no haberse vendido nunca el producto. --
 
-SELECT nombre, apellido, DNI, telefono, direccion FROM cliente WHERE idCliente IN (SELECT idCliente FROM factura WHERE fecha LIKE '2017%');
+SELECT p.nombreP, p.descripcion, p.precio, COUNT(d.idProducto) FROM producto p
+LEFT JOIN detalle d ON p.idProducto = d.idProducto
+GROUP BY p.idProducto;

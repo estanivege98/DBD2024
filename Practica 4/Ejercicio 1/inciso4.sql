@@ -57,6 +57,13 @@ INSERT INTO producto (idProducto, nombreP, descripcion, precio, stock) VALUES
 ('2', 'Producto B', 'Descripcion B', '1000', '20'),
 ('3', 'Producto C', 'Descripcion C', '500', '30');
 
--- Listar nombre, apellido, DNI, teléfono y dirección de clientes que realizaron compras solamente durante 2017. --
+-- Listar nombre, descripción, precio y stock de productos no vendidos a clientes que tengan teléfono con característica 221 --
+-- (la característica está al comienzo del teléfono). Ordenar por nombre. --
 
-SELECT nombre, apellido, DNI, telefono, direccion FROM cliente WHERE idCliente IN (SELECT idCliente FROM factura WHERE fecha LIKE '2017%');
+SELECT nombreP, descripcion, precio, stock FROM producto p
+WHERE p.idProducto NOT IN (
+    SELECT d.idProducto FROM detalle d 
+    INNER JOIN factura f ON d.nroTicket = f.nroTicket
+    INNER JOIN cliente c ON f.idCliente = c.idCliente
+    WHERE c.telefono LIKE '221%'
+)
