@@ -2,10 +2,10 @@
 
 ## Tablas
 
-- **Cliente** (idCliente, nombre, apellido, DNI, telefono, direccion)
-- **Factura** (nroTicket, total, fecha, hora, idCliente (fk))
-- **Detalle** (nroTicket (fk), idProducto (fk), cantidad, preciounitario)
-- **Producto** (idProducto, nombreP, descripcion, precio, stock)
+- **Cliente** (___idCliente___, nombre, apellido, DNI, telefono, direccion)
+- **Factura** (___nroTicket___, total, fecha, hora, idCliente (fk))
+- **Detalle** (___nroTicket (fk), idProducto (fk)___, cantidad, preciounitario)
+- **Producto** (___idProducto___, nombreP, descripcion, precio, stock)
 
 ## Consultas
 
