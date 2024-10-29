@@ -58,4 +58,8 @@ INSERT INTO producto (idProducto, nombreP, descripcion, precio, stock) VALUES
 ('3', 'Producto C', 'Descripcion C', '500', '30');
 
 -- Listar nombre, descripción, precio y stock de productos vendidos al cliente con DNI 45789456, pero que no fueron vendidos a clientes de apellido ‘Garcia’. --
-SELECT producto.nombreP, producto.descripcion, producto.precio, producto.stock FROM producto 
+SELECT p.nombreP, p.descripcion, p.precio, p.stock FROM producto p 
+INNER JOIN detalle d ON p.idProducto = d.idProducto 
+INNER JOIN fatura f ON d.nroTicket = f.nroTicket 
+INNER JOIN cliente c ON f.idCliente = c.idCliente 
+WHERE c.DNI = '45789456' AND c.apellido <> 'Garcia';
