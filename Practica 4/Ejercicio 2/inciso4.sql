@@ -65,3 +65,5 @@ WHERE NOT EXISTS (
     SELECT * FROM poda p
     WHERE p.nroArbol = a.nroArbol AND p.fecha BETWEEN '2023-01-01' AND '2023-12-31'
 );
+
+-- revisar
