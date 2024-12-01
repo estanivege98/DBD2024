@@ -57,12 +57,11 @@ INSERT INTO producto (idProducto, nombreP, descripcion, precio, stock) VALUES
 ('2', 'Producto B', 'Descripcion B', '1000', '20'),
 ('3', 'Producto C', 'Descripcion C', '500', '30');
 
--- Listar nroTicket, total, fecha, hora y DNI del cliente, 
--- de aquellas facturas donde se haya comprado el producto ‘prod38’ o la factura tenga fecha de 2019.
+/*9. Listar nroTicket, total, fecha, hora para las facturas del cliente ´Jorge Pérez´ donde no haya comprado el producto ´Z´.*/
 
-SELECT f.nroTicket, f.total, f.fecha, f.hora, c.DNI 
-FROM factura f
-INNER JOIN cliente c ON f.idCliente = c.idCliente
-INNER JOIN detalle d ON f.nroTicket = d.nroTicket
-INNER JOIN producto p ON d.idProducto = p.idProducto
-WHERE p.nombreP = 'Producto A' OR f.fecha LIKE '2019%';
+SELECT f.nroTicket, total, fecha, hora
+FROM Producto p
+INNER JOIN Detalle d ON p.idProducto = d.idProducto
+INNER JOIN Factura f ON (d.nroTicket = f.nroTicket)
+INNER JOIN Cliente c ON (f.idCliente = c.idCliente)
+WHERE c.nombre = 'Jorge Pérez' AND p.nombreP != 'Z';
