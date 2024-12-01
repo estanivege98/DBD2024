@@ -1,100 +1,60 @@
-/* 3:
-Club=(codigoClub, nombre, anioFundacion, codigoCiudad(FK))
-Ciudad=(codigoCiudad, nombre)
-Estadio=(codigoEstadio, codigoClub(FK), nombre, direccion)
-Jugador=(DNI, nombre, apellido, edad, codigoCiudad(FK))
-ClubJugador(codigoClub, DNI, desde, hasta) */
+/* Ejercicio 3
+Banda = (codigoB, nombreBanda, genero_musical, año_creacion)
+Integrante = (DNI, nombre, apellido, dirección, email, fecha_nacimiento, codigoB(fk))
+Escenario = (nroEscenario, nombre_escenario, ubicación, cubierto, m2, descripción)
+Recital = (fecha, hora, nroEscenario (fk), codigoB (fk))
+*/
 
-/* 1. Reportar nombre y anioFundacion de aquellos clubes de la ciudad de La Plata que no
-poseen estadio. */
+/*1. Listar DNI, nombre, apellido,dirección y email de integrantes nacidos entre 1980 y 1990 y que
+hayan realizado algún recital durante 2023.*/
+SELECT i.DNI, i.nombre, i.apellido, i.dirección, i.email
+FROM Integrante i
+INNER JOIN Recital r ON (i.codigoB = r.codigoB)
+WHERE i.fecha_nacimiento BETWEEN '1980-01-01' AND '1990-12-31' AND r.fecha BETWEEN '2023-01-01' AND '2023-12-31';
 
-SELECT c.nombre, c.anioFundacion
-FROM Club C
-LEFT JOIN Estadio e ON (c.codigoClub = e.codigoClub)
-INNER JOIN Ciudad ciu ON (c.codigoCiudad = ciu.codigoCiudad)
-Where ciu.nombre = 'La Plata' AND e.codigoEstadio IS NULL;
+/*2. Reportar nombre, género musical y año de creación de bandas que hayan realizado recitales
+durante 2023, pero no hayan tocado durante 2022 .*/
+SELECT b.nombreBanda, b.genero_musical, b.año_creacion
+FROM Banda b
+INNER JOIN recital r ON (b.codigoB = r.codigoB)
+WHERE r.fecha BETWEEN '2023-01-01' AND '2023-12-31' AND b.codigoB NOT IN (
+    SELECT b.codigoB
+    FROM Banda b
+    INNER JOIN recital r ON (b.codigoB = r.codigoB)
+    WHERE r.fecha BETWEEN '2022-01-01' AND '2022-12-31'
+);
 
-/* 2. Listar nombre de los clubes que no hayan tenido ni tengan jugadores de la ciudad de
-Berisso. */
+/*3. Listar el cronograma de recitales del día 04/12/2023. Se deberá listar nombre de la banda que
+ejecutará el recital, fecha, hora, y el nombre y ubicación del escenario correspondiente.*/
+SELECT b.nombreBanda, r.fecha, r.hora, e.nombre_escenario, e.ubicación
+FROM Banda b
+INNER JOIN Recital r ON (b.codigoB = r.codigoB)
+INNER JOIN Escenario e ON (r.nroEscenario = e.nroEscenario)
+WHERE r.fecha = '2023-12-04';
 
-SELECT c.nombre
-FROM Club c
-INNER JOIN ClubJugador cj ON (c.codigoClub = cj.codigoClub)
-WHERE cj.DNI NOT IN (
-    SELECT j.DNI
-    FROM Jugador j
-    INNER JOIN Ciudad ciu ON (j.codigoCiudad = ciu.codigoCiudad)
-    WHERE ciu.nombre = 'Berisso'
-)
+/*4. Listar DNI, nombre, apellido,email de integrantes que hayan tocado en el escenario con nombre
+‘Gustavo Cerati’ y en el escenario con nombre ‘Carlos Gardel’.*/
+SELECT i.DNI, i.nombre, i.apellido, i.email
+FROM Integrante i
+INNER JOIN Recital r ON (i.codigoB = r.codigoB)
+INNER JOIN Escenario e ON (r.nroEscenario = e.nroEscenario)
+WHERE e.nombre_escenario = 'Gustavo Cerati' OR e.nombre_escenario = 'Carlos Gardel';
 
-/* 3. Mostrar DNI, nombre y apellido de aquellos jugadores que jugaron o juegan en el club
-Gimnasia y Esgrima La PLata. */
+/*5. Reportar nombre, género musical y año de creación de bandas que tengan más de 8 integrantes.*/
 
-SELECT j.DNI, j.nombre, j.apellido
-FROM Jugador j
-INNER JOIN ClubJugador cj ON (j.DNI = cj.DNI)
-INNER JOIN Club c ON (cj.codigoClub = c.codigoClub)
-WHERE c.nombre = 'Gimnasia y Esgrima La Plata'
+/*6. Listar nombre de escenario, ubicación y descripción de escenarios que solo tuvieron recitales
+con el género musical rock and roll. Ordenar por nombre de escenario*/
 
-/* 4. Mostrar DNI, nombre y apellido de aquellos jugadores que tengan más de 29 años y
-hayan jugado o juegan en algún club de la ciudad de Córdoba. */
+/*7. Listar nombre, género musical y año de creación de bandas que hayan realizado recitales en
+escenarios cubiertos durante 2023.// cubierto es true, false según corresponda*/
 
-SELECT j.DNI, j.nombre, j.apellido
-FROM Jugador j
-INNER JOIN ClubJugador cj ON (j.DNI = cj.DNI)
-INNER JOIN Club c ON (cj.codigoClub = c.codigoClub)
-INNER JOIN Ciudad ciu ON (c.codigoCiudad = ciu.codigoCiudad)
-WHERE ciu.nombre = 'Córdoba' AND j.edad > 29
+/*8. Reportar para cada escenario, nombre del escenario y cantidad de recitales durante 2024.*/
+SELECT e.nombre_escenario, COUNT(r.fecha) as cantidadRecitales
+FROM Escenario e
+INNER JOIN Recital r ON (e.nroEscenario = r.nroEscenario)
+WHERE r.fecha BETWEEN '2024-01-01' AND '2024-12-31'
+GROUP BY e.nroEscenario, e.nombre_escenario;
 
-/* 5. Mostrar para cada club, nombre de club y la edad promedio de los jugadores que juegan
-actualmente en cada uno. */
 
-SELECT c.nombre, AVG(j.edad) as edadPromedio
-FROM Club c
-INNER JOIN ClubJugador cj ON (c.codigoClub = cj.codigoClub)
-WHERE cj.hasta IS NULL
-GROUP BY c.codigoCiudad, c.nombre
-
-/* 6. Listar para cada jugador: nombre, apellido, edad y cantidad de clubes diferentes en los
-que jugó. (incluido el actual) */
-SELECT c.nombre, c.apellido, c.edad, COUNT(*) as cantidadClubes
-FROM Jugador j
-INNER JOIN ClubJugador cj ON (j.DNI = cj.DNI)
-GROUP BY j.DNI, j.nombre, j.apellido, j.edad
-
-/* 7. Mostrar el nombre de los clubes que nunca hayan tenido jugadores de la ciudad de Mar
-del Plata. */
-SELECT c.nombre
-FROM Club c
-INNER JOIN clubJugador cj ON (c.codigoClub = cj.codigoClub)
-WHERE cj.DNI NOT IN (
-    SELECT j.DNI
-    FROM Jugador j
-    INNER JOIN Ciudad ciu ON (j.codigoCiudad = ciu.codigoCiudad)
-    WHERE ciu.nombre = 'Mar del Plata'
-)
-
-/* 8. Reportar el nombre y apellido de aquellos jugadores que hayan jugado en todos los
-clubes. */
-SELECT j.nombre, j.apellido
-FROM Jugador j
-WHERE j.DNI NOT EXIST (
-    SELECT *
-    FROM Club C
-    WHERE NOT EXIST (
-        SELECT *
-        FROM ClubJugador cj
-        WHERE cj.DNI = j.DNI AND cj.codigoClub = c.codigoClub
-    )
-)
-
-/* 9. Agregar con codigoClub 1234 el club “Estrella de Berisso” que se fundó en 1921 y que
-pertenece a la ciudad de Berisso. Puede asumir que el codigoClub 1234 no existe en la
-tabla Club.
- */
-INSERT INTO Club (codigoClub, nombre, anioFundacion, codigoCiudad)
-VALUES (1234, 'Estrella de Berisso', 1921,(
-    SELECT codigoCiudad
-    FROM Ciudad
-    WHERE nombre = 'Berisso'
-))
+/*9. Modificar el nombre de la banda ‘Mempis la Blusera’ a: ‘Memphis la Blusera’.*/
+UPDATE Banda SET nombreBanda = 'Memphis La Blusera' WHERE nombreBanda = 'Mempis la Blusera';
